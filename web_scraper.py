@@ -14,7 +14,6 @@
 #         | |  |  ``/  /`  /
 #        /,_|  |   /,_/   /
 #           /,_/      '`-'
-from logging import exception
 import os
 import requests
 from bs4 import BeautifulSoup as bs
