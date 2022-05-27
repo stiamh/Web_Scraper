@@ -15,9 +15,11 @@
 #        /,_|  |   /,_/   /
 #           /,_/      '`-'
 import os
+from matplotlib.pyplot import title
 import requests
 from bs4 import BeautifulSoup as bs
 import traceback
+import shutil
 
 print("Enter the URL you want to scrape from:") 
 websiteURL = input() 
@@ -29,7 +31,7 @@ print("Enter the tag you want to scrape:") # Lets you decide what data you would
 tag = input().lower()
 tags = soup.findAll(tag)
 
-print(tags)
+illegalChars = ['\'', '/', ':', '*', '"', '<', '>', '|' ] # Windows does not allow these characters in file names. 
 
 def text_scrape(tags):
     print("What would you like the file name to be called:")
@@ -55,17 +57,31 @@ def image_scrape(tags):
         os.makedirs(folder_name)
         os.chdir(folder_name)
 
-    x = 0
+
+    x = 0 # Used for indexing pictures that do not have a title. 
     for image in tags:
         try:
             imageUrl = image['src']
-            print(image['src']) # Test to see output.
-            source = requests.get(websiteURL, imageUrl)
+            imageAlt = image['alt']
+            print(imageAlt)
+            # if illegalChars in imageAlt:
+            #     for illegalChar in imageAlt:
+            #         imageAlt = imageAlt.replace(illegalChar, ' - ')
+            if ':' in imageAlt:
+                imageAlt = imageAlt.replace(':', '-')
+            fullUrl = websiteURL + imageUrl
+            source = requests.get(fullUrl, stream=True)
             print(source) # prints response code. 
             if source.status_code == 200:
-                with open(f'{folder_name}-' + str(x) + '.jpg', 'wb') as f:
-                    f.write(source.content)
-                    x += 1
+                if imageAlt != '':
+                    with open(f'{imageAlt}' + '.jpg', 'wb') as f:
+                        source.raw.decode_content = True
+                        shutil.copyfileobj(source.raw, f)
+                else:
+                    with open(f'{folder_name}-' + str(x) + '.jpg', 'wb') as f:
+                        source.raw.decode_content = True
+                        shutil.copyfileobj(source.raw, f)
+                        x += 1
         except:
             traceback.print_exc()
 
