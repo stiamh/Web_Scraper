@@ -31,8 +31,17 @@ print("Enter the tag you want to scrape:") # Lets you decide what data you would
 tag = input().lower()
 tags = soup.findAll(tag)
 
-illegalChars = ['\'', '/', ':', '*', '"', '<', '>', '|' ] # Windows does not allow these characters in file names. 
+illegalChars = ['\\','/', ':', '*', '"', '<', '>', '|'] # Windows does not allow these characters in file names. 
 
+def illegal_chars_check(imageAlt):
+    i = 0
+    while i < len(illegalChars):
+        if illegalChars[i] in imageAlt:
+            imageAlt = imageAlt.replace(str(illegalChars[i]), ' -')
+        i += 1
+    return imageAlt
+# if ':' in imageAlt:
+#     imageAlt = imageAlt.replace(':', '-')
 def text_scrape(tags):
     print("What would you like the file name to be called:")
     file_name = input()
@@ -57,26 +66,23 @@ def image_scrape(tags):
         os.makedirs(folder_name)
         os.chdir(folder_name)
 
-
     x = 0 # Used for indexing pictures that do not have a title. 
     for image in tags:
         try:
             imageUrl = image['src']
             imageAlt = image['alt']
-            print(imageAlt)
-            # if illegalChars in imageAlt:
-            #     for illegalChar in imageAlt:
-            #         imageAlt = imageAlt.replace(illegalChar, ' - ')
-            if ':' in imageAlt:
-                imageAlt = imageAlt.replace(':', '-')
+            imageAlt = illegal_chars_check(imageAlt)
             fullUrl = websiteURL + imageUrl
             source = requests.get(fullUrl, stream=True)
             print(source) # prints response code. 
             if source.status_code == 200:
-                if imageAlt != '':
+                alt_test = image.find_all(image['alt'])
+                print(alt_test)
+                if alt_test != None:
                     with open(f'{imageAlt}' + '.jpg', 'wb') as f:
                         source.raw.decode_content = True
                         shutil.copyfileobj(source.raw, f)
+                        print(imageAlt)
                 else:
                     with open(f'{folder_name}-' + str(x) + '.jpg', 'wb') as f:
                         source.raw.decode_content = True
