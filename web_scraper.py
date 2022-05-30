@@ -40,18 +40,18 @@ def illegal_chars_check(imageAlt):
             imageAlt = imageAlt.replace(str(illegalChars[i]), ' -')
         i += 1
     return imageAlt
-# if ':' in imageAlt:
-#     imageAlt = imageAlt.replace(':', '-')
+
 def text_scrape(tags):
+    print(soup.prettify())
     print("What would you like the file name to be called:")
     file_name = input()
-    file = open(f'{file_name}.txt', 'w')
     print("What data tag would you like to scrape:")
     data = input()
     for attribute in tags:
         source = requests.get(url)
         if source.status_code == 200:
             try:
+                file = open(f'{file_name}.txt', 'w')
                 url = attribute.attrs(data)
                 attribute = str(attribute)
                 print(attribute)
@@ -77,7 +77,6 @@ def image_scrape(tags):
             print(source) # prints response code. 
             if source.status_code == 200:
                 alt_test = image.find_all(image['alt'])
-                print(alt_test)
                 if alt_test != None:
                     with open(f'{imageAlt}' + '.jpg', 'wb') as f:
                         source.raw.decode_content = True
