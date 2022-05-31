@@ -27,10 +27,9 @@ websiteURL = input()
 req = requests.get(websiteURL)
 soup = bs(req.content, 'html.parser')
 
-print("Enter the tag you want to scrape:") # Lets you decide what data you would like to scrap based on the data's tag on the website. 
+print("Enter the tag you want to scrape:") # Lets you decide what data you would like to scrape based on the data's tag on the website, for example: 'img', 'title', 'h2', etc 
 tag = input().lower()
 tags = soup.findAll(tag)
-
 illegalChars = ['\\','/', ':', '*', '"', '<', '>', '|'] # Windows does not allow these characters in file names. 
 
 def illegal_chars_check(imageAlt):
@@ -42,20 +41,19 @@ def illegal_chars_check(imageAlt):
     return imageAlt
 
 def text_scrape(tags):
-    print(soup.prettify())
+    print(tags)
     print("What would you like the file name to be called:")
     file_name = input()
-    print("What data tag would you like to scrape:")
-    data = input()
+    print("What attribute tag would you like to scrape:") 
+    attribute = input()
     for attribute in tags:
-        source = requests.get(url)
+        source = requests.get(websiteURL)
         if source.status_code == 200:
             try:
-                file = open(f'{file_name}.txt', 'w')
-                url = attribute.attrs(data)
-                attribute = str(attribute)
-                print(attribute)
-                file.write(attribute)
+               print(attribute)
+               str(attribute)
+               with open(f"{file_name}.txt", "w") as f:
+                   f.write(attribute)
             except:
                 traceback.print_exc() 
 
