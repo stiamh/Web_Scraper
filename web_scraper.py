@@ -41,21 +41,23 @@ def illegal_chars_check(imageAlt):
     return imageAlt
 
 def text_scrape(tags):
-    print(tags)
+    print(tags) # All p tags in this case. 
     print("What would you like the file name to be called:")
     file_name = input()
-    print("What attribute tag would you like to scrape:") 
-    attribute = input()
+    open(f"{file_name}.txt", "w").close() # Just creates the file with the name and closes it. 
+    print("What class tag would you like to scrape:") 
+    class_ = input()
+    all_classes = soup.findAll(class_)
     for attribute in tags:
-        source = requests.get(websiteURL)
-        if source.status_code == 200:
-            try:
-               print(attribute)
-               str(attribute)
-               with open(f"{file_name}.txt", "w") as f:
-                   f.write(attribute)
-            except:
-                traceback.print_exc() 
+        try:
+            source = requests.get(websiteURL)
+            if source.status_code == 200:
+                print(class_)
+                print(attribute)
+                with open(f"{file_name}.txt", "w") as f:
+                    f.write(all_classes, str(attribute))
+        except:
+                    traceback.print_exc() 
 
 def image_scrape(tags):
     print("What would you like the folder to be called:")
@@ -74,7 +76,7 @@ def image_scrape(tags):
             source = requests.get(fullUrl, stream=True)
             print(source) # prints response code. 
             if source.status_code == 200:
-                alt_test = image.find_all(image['alt'])
+                alt_test = image.findAll(image['alt'])
                 if alt_test != None:
                     with open(f'{imageAlt}' + '.jpg', 'wb') as f:
                         source.raw.decode_content = True

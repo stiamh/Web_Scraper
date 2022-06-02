@@ -1,2 +1,2 @@
 # web_scraper
-Very basic web scraper. 
+Basic example of a webscraper. Use https://books.toscrape.com/ to try it out!
